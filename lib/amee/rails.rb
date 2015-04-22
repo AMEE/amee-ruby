@@ -29,12 +29,6 @@ module AMEE
           if $AMEE_CONFIG[:timeout]
             options.merge! :timeout => $AMEE_CONFIG[:timeout].to_i
           end
-          if $AMEE_CONFIG[:cache] == 'rails'
-            # Pass in the rails cache store
-            options[:cache_store] = ActionController::Base.cache_store
-          else
-            options[:cache] ||= $AMEE_CONFIG[:cache] if $AMEE_CONFIG[:cache].present?
-          end
           options[:enable_debug]   ||= $AMEE_CONFIG[:debug] if $AMEE_CONFIG[:debug].present?
           @connection = self.connect($AMEE_CONFIG[:server], $AMEE_CONFIG[:username], $AMEE_CONFIG[:password], options)
           # Also store as $amee for backwards compatibility, though this is now deprecated
@@ -42,11 +36,11 @@ module AMEE
         end
         @connection
       end
+
       protected
+
       def self.connect(server, username, password, options)
-        connection = AMEE::Connection.new(server, username, password, options)
-        connection.authenticate unless options[:authenticate] == false
-        return connection
+        AMEE::Connection.new(server, username, password, options)
       end
     end
 
